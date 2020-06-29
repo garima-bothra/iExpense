@@ -13,6 +13,15 @@ struct ExpenseItem: Identifiable, Codable {
     let name: String
     let type: String
     let amount: Int
+    var tag: String {
+         if amount <= 10 {
+                return "🟢 "
+            } else if amount <= 100 {
+                return "🟡 "
+         } else {
+            return "🔴 "
+        }
+    }
 }
 
 class Expenses: ObservableObject {
@@ -51,13 +60,13 @@ struct ContentView: View {
                 ForEach(expenses.items) { item in
                      HStack {
                            VStack(alignment: .leading) {
-                               Text(item.name)
+                            Text(item.tag + item.name)
                                    .font(.headline)
                                Text(item.type)
                            }
 
                            Spacer()
-                           Text("$\(item.amount)")
+                           Text("₹\(item.amount)")
                        }
                 }
                 .onDelete(perform: removeItems)
