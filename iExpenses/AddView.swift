@@ -17,6 +17,9 @@ struct AddView: View {
     @State private var name = ""
     @State private var type = "Personal"
     @State private var amount = ""
+    @State private var showingAlert = false
+    @State private var title: String = ""
+    @State private var message: String = ""
 
     static let types = ["Business", "Personal"]
 
@@ -34,12 +37,26 @@ struct AddView: View {
             }
             .navigationBarTitle("Add new expense")
             .navigationBarItems(trailing: Button("Save") {
+
+                if self.name.trimmingCharacters(in: NSCharacterSet.whitespaces) == "" {
+                    self.title = "Invalid Expense Name :("
+                    self.message = "Please enter a valid name!"
+                    self.showingAlert = true
+                    return
+                }
                 if let actualAmount = Int(self.amount) {
                     let item = ExpenseItem(name: self.name, type: self.type, amount: actualAmount)
                     self.expenses.items.append(item)
                     self.presentationMode.wrappedValue.dismiss()
+                } else {
+                    self.title = "Invalid Amount :("
+                    self.message = "Please enter a valid amount!"
+                    self.showingAlert = true
                 }
             })
+        }
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text(title), message: Text(message), dismissButton: .default(Text("Okay")))
         }
     }
 }
